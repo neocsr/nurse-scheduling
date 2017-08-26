@@ -104,17 +104,20 @@ def main():
     print()
 
     # Display a few solutions picked at random.
-    a_few_solutions = [859, 2034, 5091, 7003]
-
-    for sol in a_few_solutions:
-        print("Solution number", sol, '\n')
-
+    def print_solution(sol):
         for i in range(num_days):
             print("Day", i)
             for j in range(num_nurses):
                 print("Nurse", j, "assigned to shift",
                       collector.Value(sol, shifts[(j, i)]))
             print()
+
+    a_few_solutions = [859, 2034, 5091, 7003]
+
+    for sol in a_few_solutions:
+        print("Solution number", sol, '\n')
+        print_solution(sol)
+
 
 if __name__ == "__main__":
     main()
