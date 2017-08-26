@@ -31,6 +31,9 @@ def main():
             nurses[(j, i)] = solver.IntVar(0, num_nurses - 1,
                                            "shift%d day%d" % (j, i))
 
+    nurses_flat = [nurses[(j, i)] for j in range(num_shifts)
+                   for i in range(num_days)]
+
     # Set relationships between shifts and nurses.
     for day in range(num_days):
         nurses_for_day = [nurses[(j, day)] for j in range(num_shifts)]
@@ -90,12 +93,12 @@ def main():
     solver.Add(solver.Max(nurses[(3, 6)] == nurses[(3, 0)], nurses[(3, 0)] == nurses[(3, 1)]) == 1)
 
     # Create the decision builder.
-    db = solver.Phase(shifts_flat, solver.CHOOSE_FIRST_UNBOUND,
+    db = solver.Phase(nurses_flat, solver.CHOOSE_FIRST_UNBOUND,
                       solver.ASSIGN_MIN_VALUE)
 
     # Create the solution collector.
     solution = solver.Assignment()
-    solution.Add(shifts_flat)
+    solution.Add(nurses_flat)
     collector = solver.AllSolutionCollector(solution)
 
     solver.Solve(db, [collector])
@@ -112,12 +115,26 @@ def main():
                       collector.Value(sol, shifts[(j, i)]))
             print()
 
+    def print_schedule(sol):
+        days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        nurse_dict = {0: 'A', 1: 'B', 2: 'C', 3: 'D'}
+
+        row_format = '{:>7}' + '{:>5}' * num_days
+        print(row_format.format('', *days))
+
+        for j in range(1, num_shifts):
+            row = []
+            for i in range(num_days):
+                val = collector.Value(sol, nurses[(j, i)])
+                row.append(nurse_dict[val])
+            print(row_format.format('Shift %d' % j, *row))
+        print()
+
     a_few_solutions = [859, 2034, 5091, 7003]
 
     for sol in a_few_solutions:
         print("Solution number", sol, '\n')
-        print_solution(sol)
-
+        print_schedule(sol)
 
 if __name__ == "__main__":
     main()
