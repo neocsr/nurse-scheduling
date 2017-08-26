@@ -109,12 +109,12 @@ def main():
     for sol in a_few_solutions:
         print("Solution number", sol, '\n')
 
-    for i in range(num_days):
-        print("Day", i)
-        for j in range(num_nurses):
-            print("Nurse", j, "assigned to task",
-                  collector.Value(sol, shifts[(j, i)]))
-        print()
+        for i in range(num_days):
+            print("Day", i)
+            for j in range(num_nurses):
+                print("Nurse", j, "assigned to shift",
+                      collector.Value(sol, shifts[(j, i)]))
+            print()
 
 if __name__ == "__main__":
     main()
